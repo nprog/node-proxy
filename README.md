@@ -5,8 +5,11 @@ node-proxy - node.js反向代理缓存服务器
 * 实现接口映射功能，可以隐藏后端服务器等真实接口地址
 * 用redis HashMap实现GET请求的缓存，可以单独配置每个地址的缓存时间，已适用不同接口对更新频率的需求
 
-Install with:
+安装:
 
+    git clone https://github.com/nprog/node-proxy
+    cd node-proxy
+    npm install
     node index.js
 
 ## 配置详解
