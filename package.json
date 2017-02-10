@@ -1,0 +1,13 @@
+{
+	"name": "node",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"start": "node ./index.js"
+	},
+	"dependencies": {
+		"redis": "~2.6.5",
+		"request": "~2.79.0",
+		"moment": "~2.17.1"
+	}
+}
