@@ -12,6 +12,7 @@ module.exports = {
 		'access-control-allow-headers' : 'Origin, X-Requested-With, Content-Type, Accept, If-Modified-Since',
 		'access-control-allow-credentials' : 'true',
 	},
+	cacheMimes : ['application/javascript', 'text/html', 'text/json;charset=UTF-8', 'text/json', 'text/css', 'text/plain'],
 	not_found : '404/Page Not Found',
 	list_maps : {
 		'/addr1' : '/realpath/path1',
