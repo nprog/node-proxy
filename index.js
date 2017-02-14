@@ -86,7 +86,8 @@ function handler(req, res) {
 	var realUrl = findRealUrl(pathinfo.pathname);
 	var cacheTime = findCacheTime(pathinfo.pathname);
 	if (!realUrl) {
-		console.log('[' + moment(new Date()).format('YYYY-MM-DD HH:mm:ss') + '] $' + req.method + ' ' + pathinfo.pathname + (['POST', 'PUT'].indexOf(req.method) == -1 ? pathinfo.search : '') + ' [404]');
+		console.log('[' + moment(new Date()).format('YYYY-MM-DD HH:mm:ss') + '] $' + req.method 
+			+ ' ' + pathinfo.pathname + (['POST', 'PUT'].indexOf(req.method) == -1 ? pathinfo.search : '') + ' [404]');
 		res.writeHead(404, {
 			'Content-type': 'text/html'
 		});
@@ -95,7 +96,6 @@ function handler(req, res) {
 	}
 
 	var sendData = function(headers, data) {
-		headers['content-length'] = Buffer.byteLength(data, 'utf8');
 		for (var i in proxyConfig.headers) {
 			headers[i] = proxyConfig.headers[i];
 		}
@@ -109,7 +109,8 @@ function handler(req, res) {
 	var procLogic = function() {
 		cache.get(redisClient, realUrl, [pathinfo.search, 'headers'], function(data) {
 			if (data[0] != null) {
-				console.log('[' + moment(new Date()).format('YYYY-MM-DD HH:mm:ss') + '] $' + req.method + ' ' + pathinfo.pathname + pathinfo.search + ' => ' + realUrl + pathinfo.search + ' [from cache]');
+				console.log('[' + moment(new Date()).format('YYYY-MM-DD HH:mm:ss') + '] $' + req.method 
+					+ ' ' + pathinfo.pathname + pathinfo.search + ' => ' + realUrl + pathinfo.search + ' [from cache]');
 				try {
 					headerObj = JSON.parse(data[1]);
 				} catch (err) {
@@ -117,7 +118,8 @@ function handler(req, res) {
 				}
 				sendData(headerObj, data[0]);
 			} else {
-				console.log('[' + moment(new Date()).format('YYYY-MM-DD HH:mm:ss') + '] $' + req.method + ' ' + pathinfo.pathname + pathinfo.search + ' => ' + realUrl + pathinfo.search + ' [from server]');
+				console.log('[' + moment(new Date()).format('YYYY-MM-DD HH:mm:ss') + '] $' + req.method 
+					+ ' ' + pathinfo.pathname + pathinfo.search + ' => ' + realUrl + pathinfo.search + ' [from server]');
 				delete req.headers.host;
 				delete req.headers['upgrade-insecure-requests'];
 				delete req.headers['if-none-match'];
@@ -129,12 +131,9 @@ function handler(req, res) {
 						return;
 					}
 
-					headerObj = response.headers;
-					sendData(headerObj, data);
-
-					//set cache
-					if (cacheTime > 0 && req.method == 'GET') {
-						cache.set(redisClient, realUrl, [pathinfo.search, data, 'headers', JSON.stringify(headerObj)], cacheTime);
+					// set cache
+					if (cacheTime > 0 && req.method == 'GET' && proxyConfig.cacheMimes.indexOf(response.headers['content-type']) != -1) {
+						cache.set(redisClient, realUrl, [pathinfo.search, data, 'headers', JSON.stringify(response.headers)], cacheTime);
 					}
 				}
 
@@ -147,7 +146,7 @@ function handler(req, res) {
 					reqOpts.body = paramsData;
 				}
 
-				request(reqOpts, requestCallback);
+				request(reqOpts, requestCallback).pipe(res);
 			}
 		});
 	}
@@ -176,7 +175,8 @@ function handler(req, res) {
 			});
 			break;
 		default:
-			console.log('[' + moment(new Date()).format('YYYY-MM-DD HH:mm:ss') + '] $' + req.method + ' ' + pathinfo.pathname + pathinfo.search + ' [404]');
+			console.log('[' + moment(new Date()).format('YYYY-MM-DD HH:mm:ss') + '] $' + req.method 
+				+ ' ' + pathinfo.pathname + pathinfo.search + ' [404]');
 			res.writeHead(404, {
 				'Content-type': 'text/html'
 			});
