@@ -64,6 +64,9 @@ module.exports = {
         'access-control-allow-headers' : 'Origin, X-Requested-With, Content-Type, Accept, If-Modified-Since',
         'access-control-allow-credentials' : 'true',
     },
+    
+    // 配置需要缓存的mime,请不要包含图片视频等二进制类型
+    cacheMimes : ['application/javascript', 'text/html', 'text/json;charset=UTF-8', 'text/json', 'text/css', 'text/plain'],
 
     // 访问不存在的接口返回信息
     not_found : '404/Page Not Found',
